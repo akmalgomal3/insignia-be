@@ -73,6 +73,18 @@ This approach ensures that tasks with specific times (like "28 2 * * *" for 2:28
 
 Note: Tasks can only execute when the application is running. If the application is stopped during a scheduled execution time, that execution will be missed.
 
+### Retry Logic
+
+When a task fails to execute (due to network issues, invalid webhook URL, etc.), the system will automatically retry based on the `max_retry` value configured for that task:
+
+1. If a task fails, it will retry up to `max_retry` times
+2. Retry intervals use exponential backoff (1s, 2s, 4s, 8s, etc.)
+3. After exceeding `max_retry` attempts, the task will be automatically deactivated to prevent continuous failures
+
+This ensures that temporary issues can be resolved automatically while preventing tasks with persistent problems from continuously consuming system resources.
+
+**Note**: The scheduler now refreshes task status before execution to ensure deactivated tasks are not executed again.
+
 ## Development
 
 Install dependencies:
@@ -121,10 +133,35 @@ ruff check . --fix
 
 ## Testing
 
-Run tests:
+Run all tests:
 ```bash
-pytest
+python -m pytest -v
 ```
+
+Run specific test files:
+```bash
+# Test main endpoints
+pytest tests/test_main.py
+
+# Test task endpoints
+pytest tests/test_tasks.py
+
+# Test task log endpoints
+pytest tests/test_task_logs.py
+
+# Test scheduler functionality
+pytest tests/test_scheduler.py
+
+# Test retry logic
+pytest tests/test_retry_logic.py
+```
+
+The test suite includes:
+- Unit tests for all API endpoints
+- Integration tests for database operations
+- Tests for scheduler functionality
+- Tests for retry logic and task deactivation
+- Authentication tests
 
 ## API Documentation
 

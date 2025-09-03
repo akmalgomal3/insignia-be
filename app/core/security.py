@@ -4,6 +4,7 @@ from app.core.config import settings
 
 security = HTTPBearer()
 
+
 def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
     if credentials.credentials != settings.API_TOKEN:
         raise HTTPException(

@@ -5,14 +5,16 @@ from app.core.database import Base
 from datetime import datetime
 import uuid
 
+
 class TaskStatusEnum(str, Enum):
     ACTIVE = "active"
     INACTIVE = "inactive"
     DELETED = "deleted"
 
+
 class Task(Base):
     __tablename__ = "tasks"
-    
+
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String, nullable=False)
     schedule = Column(String, nullable=False)  # cron expression
@@ -22,6 +24,6 @@ class Task(Base):
     status = Column(String, default="active")  # active, inactive, deleted
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+
     # Relationship
     logs = relationship("TaskLog", back_populates="task", cascade="all, delete-orphan")
