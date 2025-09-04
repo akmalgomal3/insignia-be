@@ -2,6 +2,12 @@
 
 A FastAPI-based task scheduler application with PostgreSQL database integration.
 
+Public URL (deployed on Google Cloud Run)
+- Swagger UI: https://insignia-be-331739783852.asia-southeast2.run.app/docs
+- ReDoc: https://insignia-be-331739783852.asia-southeast2.run.app/redoc
+
+List of question QWEN CLI: https://docs.google.com/document/d/1CpGg2dPutTyVjCmyFmn2e30oFiV6Mq56XJkjqHgKSLw/edit?usp=sharing
+
 ## Features
 
 - FastAPI framework with uvicorn ASGI server
