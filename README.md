@@ -417,7 +417,7 @@ The test suite includes:
 - **Endpoint**: `GET /health`
 - **Description**: Health check endpoint
 - **Headers**: 
-  ```
+  ```bash
   Authorization: Bearer your-super-secret-token-here
   ```
 - **Response**: 
@@ -426,3 +426,94 @@ The test suite includes:
     "status": "healthy"
   }
   ```
+
+## Deploy to Google Cloud Run
+
+### Prerequisites
+
+1. Install [Google Cloud SDK](https://cloud.google.com/sdk/docs/install)
+2. Initialize gcloud:
+   ```bash
+   gcloud init
+   ```
+3. Set your project:
+   ```bash
+   gcloud config set project lively-antonym-430302-q4
+   ```
+4. Enable required APIs:
+   ```bash
+   gcloud services enable cloudbuild.googleapis.com
+   gcloud services enable run.googleapis.com
+   ```
+
+### Deploy to Cloud Run
+
+To deploy the application to Google Cloud Run:
+
+1. Build and deploy using Cloud Build:
+   ```bash
+   gcloud builds submit --tag gcr.io/lively-antonym-430302-q4/insignia-be
+   ```
+
+2. Deploy to Cloud Run:
+   ```bash
+   gcloud run deploy --image gcr.io/lively-antonym-430302-q4/insignia-be --platform managed
+   ```
+
+Alternatively, you can use the automated Cloud Run deployment:
+```bash
+gcloud run deploy insignia-be \
+  --source . \
+  --platform managed \
+  --region asia-southeast2 \
+  --allow-unauthenticated
+```
+
+### Environment Variables
+
+When deploying to Cloud Run, make sure to set the required environment variables:
+- `POSTGRES_USER`
+- `POSTGRES_PASSWORD`
+- `POSTGRES_DB`
+- `POSTGRES_HOST`
+- `API_TOKEN`
+- `LOG_LEVEL`
+
+You can set them during deployment:
+```bash
+gcloud run deploy insignia-be \
+  --source . \
+  --platform managed \
+  --region asia-southeast2 \
+  --allow-unauthenticated \
+  --set-env-vars POSTGRES_USER=your-user,POSTGRES_PASSWORD=your-password,POSTGRES_DB=your-db,API_TOKEN=your-token
+```
+
+## Development
+
+Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+Run the application:
+```bash
+python main.py
+```
+
+Run with Docker Compose:
+```bash
+docker-compose up --build
+```
+
+## Logging Configuration
+
+The application uses a centralized logging configuration that can be customized through environment variables:
+
+- `LOG_LEVEL`: Set the logging level (default: INFO)
+  - Available levels: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  - Example: `LOG_LEVEL=DEBUG` for more detailed logging
+
+Logs are written to both console and a rotating file (`app.log`) with a maximum size of 10MB and up to 5 backup files.
+
+SQLAlchemy logging has been reduced to WARNING level to minimize redundant database query logs.
